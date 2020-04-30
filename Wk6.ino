@@ -7,14 +7,23 @@
 #include "Sensors.h"
 
 
-#define THRESHOLD 100
-#define FULL_SPEED 64
+#define THRESHOLD 20
+#define FULL_SPEED 150
 #define HALF_SPEED FULL_SPEED/4
 
 int i;
 const int ADC_CHANNELS = 13;
 int var[ADC_CHANNELS];
-
+//void adc_setup
+//{
+//  ADMUX |= (1 << REFS0);     // Set ADC reference to AVCC
+//  ADMUX |= (1 << ADLAR);     // Left Adjust the result 
+//  ADCSRA |= (1 << ADEN);     // Enable ADC
+//  ADCSRA |= (1 << ADIE);     // Enable ADC Interrupt
+//  sei();                     // Enable Global Interrupts
+//  ADCSRA |= (1 << ADSC);     // Start A2D Conversions
+//  return;  
+//}
 int main()
 {
   
@@ -32,30 +41,40 @@ int main()
 
   
   while(1){
-   
+     // active reading
+     int speed = 64;
+     //setMotorSpeeds(var[8]/4,var[11]/4);
+     OCR0A = var[11]/2;
+      OCR0B = var[8]/2;
+     if (var[8]<THRESHOLD || var[11]<THRESHOLD)
+     {
+      OCR0A = var[8]/4;
+      OCR0B = var[11]/4;
+     }
+     
     //query sensor
    //int sensorReading = SensorValue();
     
     //determine motor speeds using bang-bang logic
     //if(ADC4 `<128){motorSpeeds[0] = 255;}
-    motorSpeeds[0] = var[8]
-    if(var[8] >= THRESHOLD && var[11] >=THRESHOLD){
-      motorSpeeds[0] = FULL_SPEED;
-      motorSpeeds[1] = FULL_SPEED;
-       
-    }
-    else if(var[8] <= THRESHOLD && var[11] >= THRESHOLD ){
-      motorSpeeds[0] = HALF_SPEED;
-      motorSpeeds[1] = FULL_SPEED/2;
-       
-    }
-    else if(var[8] >= THRESHOLD && var[11] <= THRESHOLD ){
-      motorSpeeds[0] = FULL_SPEED/2;
-      motorSpeeds[1] = HALF_SPEED;
-    }
-    else{motorSpeeds[0] = 0;
-      motorSpeeds[1] = 0;}
-    setMotorSpeeds(motorSpeeds);
+    
+//    if(var[8] >= THRESHOLD && var[11] >=THRESHOLD){
+//      motorSpeeds[0] = FULL_SPEED;
+//      motorSpeeds[1] = FULL_SPEED;
+//       
+//    }
+//    else if(var[8] <= THRESHOLD && var[11] >= THRESHOLD ){
+//      motorSpeeds[0] = HALF_SPEED;
+//      motorSpeeds[1] = FULL_SPEED/2;
+//       
+//    }
+//    else if(var[8] >= THRESHOLD && var[11] <= THRESHOLD ){
+//      motorSpeeds[0] = FULL_SPEED/2;
+//      motorSpeeds[1] = HALF_SPEED;
+//    }
+//    else{motorSpeeds[0] = 0;
+//      motorSpeeds[1] = 0;}
+//    setMotorSpeeds(motorSpeeds);
     
   }return 0;
 }
